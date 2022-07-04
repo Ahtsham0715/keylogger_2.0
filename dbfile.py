@@ -33,6 +33,3 @@ def upload_images(imgpath):
 
     # Upload file
     blob.upload_from_filename(filename=imgpath, content_type='image/png')
-
-if __name__=="__main__":
-	write_data(data='Ahtsham CH')
