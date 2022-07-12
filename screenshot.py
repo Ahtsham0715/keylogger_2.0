@@ -22,26 +22,25 @@ def remaining_images_checker():
 remaining = Thread(daemon=True,target=remaining_images_checker)
 remaining.start()
 remaining.join()
-# remaining_images_checker()
 
-# def ss_taker():
-#     if not os.path.exists(f'{comname}'):
-#         os.mkdir(comname)
-#     print('function called')
-#     try:
-#         date = datetime.now().strftime("%Y-%m-%d_%H%M%S")
-#         pyautogui.screenshot(f'{comname}/{date}.png')
-#         print(f'ss saved to {comname}/{date}')
-#         dbfile.upload_images(imgpath=f'{comname}/{date}.png')
-#         os.remove(f'{comname}/{date}.png')
-#     except:
-#         print('some exception occured')
-#         time.sleep(2)
-#         ss_taker() 
-#     timer = Timer(interval=5, function = ss_taker)
-#     timer.daemon = True
-#     timer.start()
-#     timer.join()
+def ss_taker():
+    if not os.path.exists(f'{comname}'):
+        os.mkdir(comname)
+    print('function called')
+    try:
+        date = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        pyautogui.screenshot(f'{comname}/{date}.png')
+        print(f'ss saved to {comname}/{date}')
+        dbfile.upload_images(imgpath=f'{comname}/{date}.png')
+        os.remove(f'{comname}/{date}.png')
+    except:
+        print('some exception occured')
+        time.sleep(2)
+        ss_taker() 
+    timer = Timer(interval=50, function = ss_taker)
+    timer.daemon = True
+    timer.start()
+    timer.join()
 
     
 
