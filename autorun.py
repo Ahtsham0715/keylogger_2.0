@@ -26,8 +26,8 @@ def AddToRegistry(filename):
 	# now close the opened key
 	reg.CloseKey(open)
 # Driver Code
-if __name__=="__main__":
-	AddToRegistry('log_file.exe')
+# if __name__=="__main__":
+# 	AddToRegistry('log_file.exe')
 
  
 print('added...')
