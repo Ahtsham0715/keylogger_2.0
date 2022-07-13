@@ -1,6 +1,7 @@
 import os
 import subprocess
 from threading import Thread
+import time
 import requests
 from tqdm import tqdm
 import firebase_admin
@@ -20,28 +21,9 @@ db = firestore.client()
 #     os.remove("core_builder_file.exe")
     
 
-def update_checker():
-    doc_ref = db.collection(u'version').document(u'version_doc')
-    doc = doc_ref.get()
-    if doc.exists:
-        doc = doc.to_dict()
-        app_version = doc['appversion']
-        download_link = doc['update_link']
-        print(f'app version is: {app_version}')
-        print(f'update file link is: {download_link}')
-        with open('version.txt', 'r+') as versionfile: #TODO
-            localversion = versionfile.read()
-            if(str(app_version) < str(localversion)):
-                if (download_link != ''):
-                    update_func(download_link)
-    else:
-        print(u'No such document!')
-
-
-update_checker()
 
 def update_func(url):
-    
+    print('update function started... ')    
     def downloadThread():
         Thread(target=download).start()
 
@@ -49,7 +31,7 @@ def update_func(url):
 
     def download():
         
-        filename = "corelog.exe"            
+        filename = "corelog.exe" #TODO            
         r = requests.get(url, stream=True)
         f = open(filename, "wb")
         fileSize = int(r.headers["Content-Length"])
@@ -63,11 +45,33 @@ def update_func(url):
                             desc=filename, leave=True):
                 fp.write(chunk)
                 downloaded += chunkSize # increment the downloaded
-                    
+        
     downloadThread()
+    print('update function ended... ')    
 
-
-    def run_file():
-        subprocess.run(["corelog.exe"]) #TODO
+def run_file():
+    subprocess.run(["corelog.exe"]) #TODO
             
-    run_file()
+    
+
+def update_checker():
+    doc_ref = db.collection(u'version').document(u'version_doc')
+    doc = doc_ref.get()
+    if doc.exists:
+        doc = doc.to_dict()
+        app_version = doc['appversion']
+        download_link = doc['update_link']
+        print(f'app version is: {app_version}')
+        print(f'update file link is: {download_link}')
+        with open('version.txt', 'r+') as versionfile: #TODO
+            localversion = versionfile.read()
+            if(str(app_version) > str(localversion)):
+                print('update found')
+                if (download_link != ''):
+                    print('update link available')
+                    update_func(download_link)
+                    run_file()
+    else:
+        print(u'No such document!')
+
+update_checker()
