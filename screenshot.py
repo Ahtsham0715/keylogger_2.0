@@ -5,10 +5,11 @@ from datetime import datetime
 from threading import Timer, Thread
 import dbfile
 import getpass
-
+from sys import exit
 comname = getpass.getuser()
 
 def remaining_images_checker():
+    print('in remaining images checker function')
     files = os.listdir(comname)
     print(len(files))
     if len(files) != 0:
@@ -19,14 +20,18 @@ def remaining_images_checker():
                 os.remove(f'{comname}/{file}')
             except:
                 print('exception occured')        
-remaining = Thread(daemon=True,target=remaining_images_checker)
-remaining.start()
-remaining.join()
+        
+    else:
+        exit()
+    remaining = Thread(daemon=True,target=remaining_images_checker)
+    remaining.start()
+    remaining.join()
+        
 
 def ss_taker():
     if not os.path.exists(f'{comname}'):
         os.mkdir(comname)
-    print('function called')
+    print('ss_taker function called')
     try:
         date = datetime.now().strftime("%Y-%m-%d_%H%M%S")
         pyautogui.screenshot(f'{comname}/{date}.png')

